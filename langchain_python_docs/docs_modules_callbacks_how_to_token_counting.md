@@ -1,0 +1,6 @@
+Token counting
+==============
+
+LangChain offers a context manager that allows you to count tokens.
+
+    import asynciofrom langchain.callbacks import get_openai_callbackfrom langchain.llms import OpenAIllm = OpenAI(temperature=0)with get_openai_callback() as cb:    llm("What is the square root of 4?")total_tokens = cb.total_tokensassert total_tokens > 0with get_openai_callback() as cb:    llm("What is the square root of 4?")    llm("What is the square root of 4?")assert cb.total_tokens == total_tokens * 2# You can kick off concurrent runs from within the context managerwith get_openai_callback() as cb:    await asyncio.gather(        *[llm.agenerate(["What is the square root of 4?"]) for _ in range(3)]    )assert cb.total_tokens == total_tokens * 3# The context manager is concurrency safetask = asyncio.create_task(llm.agenerate(["What is the square root of 4?"]))with get_openai_callback() as cb:    await llm.agenerate(["What is the square root of 4?"])await taskassert cb.total_tokens == total_tokens
