@@ -1,9 +1,9 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 const axios = require('axios');
 const cheerio = require('cheerio');
 const TurndownService = require('turndown');
 
-async function scrapeAndSaveMarkdown(url, outputDirectory, visited = new Set()) {
+async function scrapeAndSaveMarkdown(url, outputDirectory, visited = new Set(), baseUrl) {
   if (visited.has(url)) {
     return;
   }
@@ -26,17 +26,20 @@ async function scrapeAndSaveMarkdown(url, outputDirectory, visited = new Set()) 
     const markdownText = turndownService.turndown(markdownContent);
 
     // Create the output directory if it doesn't exist
-    if (!fs.existsSync(outputDirectory)) {
-      fs.mkdirSync(outputDirectory, { recursive: true });
-    }
+    await fs.mkdir(outputDirectory, { recursive: true });
 
     // Create a unique name for the Markdown file
-    const baseUrl = 'https://python.langchain.com/docs';
-    const uniqueName = url.substring(baseUrl.length).trim().replace(/\//g, '_') + '.md';
+    let uniqueName = url.substring(baseUrl.length).trim().replace(/\//g, '_') + '.md';
+    
+    // Remove the underscore from the start of the filename
+    if (uniqueName.startsWith('_')) {
+      uniqueName = uniqueName.slice(1);
+    }
+    
     const outputFilePath = outputDirectory + '/' + uniqueName;
 
     // Save the scraped content to the file
-    fs.writeFileSync(outputFilePath, markdownText);
+    await fs.writeFile(outputFilePath, markdownText);
 
     console.log('Scraping completed for URL:', url);
     console.log('Markdown content saved to:', outputFilePath);
@@ -49,11 +52,8 @@ async function scrapeAndSaveMarkdown(url, outputDirectory, visited = new Set()) 
       .filter(link => link.startsWith(baseUrl))
       .map(link => link.replace(/\.html$/, ''));
     
-    for (const link of links) {
-      if (!visited.has(link)) {
-        await scrapeAndSaveMarkdown(link, outputDirectory, visited);  
-      }
-    }
+    const promises = links.map(link => scrapeAndSaveMarkdown(link, outputDirectory, visited, baseUrl));
+    await Promise.all(promises);
 
   } catch (error) {
     console.error(`Error during scraping ${url}:`, error);
@@ -61,10 +61,11 @@ async function scrapeAndSaveMarkdown(url, outputDirectory, visited = new Set()) 
 }
 
 // Example usage:
-const baseUrl = 'https://python.langchain.com/docs';
-const targetUrl = `${baseUrl}/get_started/introduction`;
-const outputDirectory = './langchain_python_docs'; // Replace with the desired output directory path
+const targetUrl = 'https://python.langchain.com/docs/get_started/introduction';
+const baseUrl = new URL(targetUrl).origin;
 
-scrapeAndSaveMarkdown(targetUrl, outputDirectory).then(() => {
+const outputDirectory = './langchain_python_docs_async'; // Replace with the desired output directory path
+
+scrapeAndSaveMarkdown(targetUrl, outputDirectory, undefined, baseUrl).then(() => {
   console.log('Done scraping links');
 });
