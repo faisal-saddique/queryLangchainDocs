@@ -23,7 +23,20 @@ async function scrapeAndSaveMarkdown(url, outputDirectory, visited = new Set(), 
 
     // Use Turndown to convert the HTML back to Markdown
     const turndownService = new TurndownService();
-    const markdownText = turndownService.turndown(markdownContent);
+    let markdownText = turndownService.turndown(markdownContent);
+
+    // Remove \u200b characters from the markdown text
+    markdownText = markdownText.replace(/\u200b/g, '');
+
+    // Remove base64 images from the markdown text
+    markdownText = markdownText.replace(/!\[.*?\]\(data:image\/.*?;base64,.*?\)/g, '');
+
+    // Remove indents from code blocks
+    markdownText = markdownText.replace(/```([\s\S]*?)```/g, (match, codeBlock) => {
+        // Remove leading spaces from each line in the code block
+        const lines = codeBlock.split('\n').map(line => line.replace(/^\s{4}/, ''));
+        return '```\n' + lines.join('\n') + '\n```';
+      });
 
     // Create the output directory if it doesn't exist
     await fs.mkdir(outputDirectory, { recursive: true });
@@ -61,10 +74,10 @@ async function scrapeAndSaveMarkdown(url, outputDirectory, visited = new Set(), 
 }
 
 // Example usage:
-const targetUrl = 'https://docs.langchain.com/docs';
+const targetUrl = 'https://python.langchain.com/docs/get_started/introduction';
 const baseUrl = new URL(targetUrl).origin;
 
-const outputDirectory = './langchain_docs'; // Replace with the desired output directory path
+const outputDirectory = './langchain_docs_python'; // Replace with the desired output directory path
 
 scrapeAndSaveMarkdown(targetUrl, outputDirectory, undefined, baseUrl).then(() => {
   console.log('Done scraping links');

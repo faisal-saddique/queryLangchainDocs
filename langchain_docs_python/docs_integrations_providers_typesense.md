@@ -1,0 +1,16 @@
+Typesense
+=========
+
+> [Typesense](https://typesense.org) is an open source, in-memory search engine, that you can either [self-host](https://typesense.org/docs/guide/install-typesense.html#option-2-local-machine-self-hosting) or run on [Typesense Cloud](https://cloud.typesense.org/). `Typesense` focuses on performance by storing the entire index in RAM (with a backup on disk) and also focuses on providing an out-of-the-box developer experience by simplifying available options and setting good defaults.
+
+Installation and Setup[](#installation-and-setup "Direct link to Installation and Setup")
+------------------------------------------------------------------------------------------
+
+    pip install typesense openapi-schema-pydantic openai tiktoken
+
+Vector Store[](#vector-store "Direct link to Vector Store")
+------------------------------------------------------------
+
+See a [usage example](/docs/integrations/vectorstores/typesense).
+
+    from langchain.vectorstores import Typesense
