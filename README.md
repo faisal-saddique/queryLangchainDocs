@@ -35,8 +35,8 @@ Follow the steps below to set up the project and use the AI assistant.
 1. Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/query-langchain-docs.git
-cd query-langchain-docs
+git clone https://github.com/faisal-saddique/queryLangchainDocs.git
+cd queryLangchainDocs
 ```
 
 2. Edit the `scrapeLangchainDocs.js` script:
