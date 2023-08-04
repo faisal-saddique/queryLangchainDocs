@@ -82,10 +82,10 @@ async function scrapeAndSaveMarkdown(url, outputDirectory, visited = new Set(), 
 }
 
 // Example usage:
-const targetUrl = 'https://python.langchain.com/docs/get_started/introduction';
+const targetUrl = 'https://js.langchain.com/docs/get_started/introduction';
 const baseUrl = new URL(targetUrl).origin;
 
-const outputDirectory = './langchain_docs_python'; // Replace with the desired output directory path
+const outputDirectory = './langchain_docs_js'; // Replace with the desired output directory path
 
 // Start the scraping process with the target URL and output directory
 scrapeAndSaveMarkdown(targetUrl, outputDirectory, undefined, baseUrl).then(() => {

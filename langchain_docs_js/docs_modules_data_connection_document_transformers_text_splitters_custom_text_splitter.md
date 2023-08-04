@@ -1,0 +1,6 @@
+Custom text splitters
+=====================
+
+If you want to implement your own custom Text Splitter, you only need to subclass TextSplitter and implement a single method: `splitText`. The method takes a string and returns a list of strings. The returned strings will be used as the chunks.
+
+    abstract class TextSplitter {  abstract splitText(text: string): Promise<string[]>;}

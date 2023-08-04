@@ -2,6 +2,7 @@
 from langchain.document_loaders import DirectoryLoader  # For loading documents from a directory
 from langchain.document_loaders import TextLoader  # For loading text documents
 from langchain.text_splitter import RecursiveCharacterTextSplitter  # For splitting text documents into chunks
+
 from dotenv import load_dotenv  # For loading environment variables from a .env file
 
 # Import OpenAI embeddings and FAISS vector store libraries
@@ -16,7 +17,7 @@ text_loader_kwargs = {'autodetect_encoding': True}
 
 # Create a DirectoryLoader instance to load documents from a specific directory
 # The 'silent_errors' parameter is set to suppress errors during loading, and 'use_multithreading' allows loading multiple documents concurrently.
-loader = DirectoryLoader('./langchain_docs_python', glob="**/*.md", loader_cls=TextLoader, loader_kwargs=text_loader_kwargs, silent_errors=True, use_multithreading=True)
+loader = DirectoryLoader('./langchain_docs_js', glob="**/*.md", loader_cls=TextLoader, loader_kwargs=text_loader_kwargs, silent_errors=True, use_multithreading=True)
 
 # Load the documents using the DirectoryLoader
 docs = loader.load()
@@ -48,4 +49,4 @@ embeddings = OpenAIEmbeddings()
 db = FAISS.from_documents(newdocs, embeddings)
 
 # Save the FAISS vector store locally with the given name 'langchain_python_docs_vectorstore'
-db.save_local("langchain_python_docs_vectorstore")
+db.save_local("langchain_js_docs_vectorstore")
